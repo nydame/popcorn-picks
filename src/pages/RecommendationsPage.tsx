@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Loader2, Film, Search } from 'lucide-react';
+import { Sparkles, Loader as Loader2, Film, Search } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useWatchlist } from '../hooks/useWatchlist';
 import { getPosterUrl, searchMovies } from '../lib/tmdb';

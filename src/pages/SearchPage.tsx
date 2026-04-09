@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Search, Loader2, TrendingUp } from 'lucide-react';
+import { Search, Loader as Loader2, TrendingUp } from 'lucide-react';
 import { searchMovies, getPopularMovies, getPosterUrl } from '../lib/tmdb';
 import type { TMDBMovie } from '../types/tmdb';
 import MovieCard from '../components/Movie/MovieCard';
