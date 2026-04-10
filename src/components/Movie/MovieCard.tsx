@@ -1,67 +1,71 @@
-import { Plus, Check } from 'lucide-react';
+import { Plus, Check, Film } from 'lucide-react';
 import type { TMDBMovie } from '../../types/tmdb';
 import { getPosterUrl } from '../../lib/tmdb';
 
 interface MovieCardProps {
   movie: TMDBMovie;
-  inWatchlist: boolean;
+  inFavorites: boolean;
   onAdd: (movie: TMDBMovie) => void;
+  onCardClick: (movie: TMDBMovie) => void;
   adding?: boolean;
 }
 
 export default function MovieCard({
   movie,
-  inWatchlist,
+  inFavorites,
   onAdd,
+  onCardClick,
   adding = false,
 }: MovieCardProps) {
-  const year = movie.release_date?.split('-')[0] || 'N/A';
+  const year = movie.release_date?.split('-')[0] || '';
   const poster = getPosterUrl(movie.poster_path);
 
+  const handleAddClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!inFavorites && !adding) onAdd(movie);
+  };
+
   return (
-    <div className="movie-card">
+    <div className="movie-card" onClick={() => onCardClick(movie)}>
       <div className="movie-poster-wrap">
         {poster ? (
-          <img
-            src={poster}
-            alt={movie.title}
-            className="movie-poster"
-            loading="lazy"
-          />
+          <img src={poster} alt={movie.title} className="movie-poster" loading="lazy" />
         ) : (
           <div className="movie-poster-placeholder">
+            <Film size={28} />
             <span>No Image</span>
           </div>
         )}
+
+        {inFavorites && <div className="movie-in-favorites">Saved</div>}
+
+        {movie.vote_average > 0 && (
+          <div className="movie-score">{movie.vote_average.toFixed(1)}</div>
+        )}
+
         <div className="movie-overlay">
           <button
-            className={`add-btn ${inWatchlist ? 'add-btn-added' : ''}`}
-            onClick={() => !inWatchlist && onAdd(movie)}
-            disabled={inWatchlist || adding}
-            aria-label={inWatchlist ? 'Already in watchlist' : 'Add to watchlist'}
+            className={`overlay-btn ${inFavorites ? 'overlay-btn-added' : 'overlay-btn-primary'}`}
+            onClick={handleAddClick}
+            disabled={inFavorites || adding}
+            aria-label={inFavorites ? 'Already in favorites' : 'Add to favorites'}
           >
-            {inWatchlist ? (
-              <>
-                <Check size={14} />
-                <span>Added</span>
-              </>
+            {inFavorites ? (
+              <><Check size={13} /> Saved</>
+            ) : adding ? (
+              <>Adding...</>
             ) : (
-              <>
-                <Plus size={14} />
-                <span>Add</span>
-              </>
+              <><Plus size={13} /> Add to Favorites</>
             )}
           </button>
+          <button className="overlay-btn overlay-btn-secondary" onClick={(e) => { e.stopPropagation(); onCardClick(movie); }}>
+            View Details
+          </button>
         </div>
-        {movie.vote_average > 0 && (
-          <div className="movie-score">
-            {movie.vote_average.toFixed(1)}
-          </div>
-        )}
       </div>
       <div className="movie-info">
         <h3 className="movie-title">{movie.title}</h3>
-        <span className="movie-year">{year}</span>
+        {year && <span className="movie-year">{year}</span>}
       </div>
     </div>
   );
