@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Layout/Navbar';
 import SearchPage from './pages/SearchPage';
 import FavoritesPage from './pages/FavoritesPage';
@@ -9,6 +10,7 @@ import './index.css';
 export default function App() {
   return (
     <BrowserRouter>
+      <AuthProvider>
       <ThemeProvider>
         <div className="app">
           <Navbar />
@@ -23,6 +25,7 @@ export default function App() {
           </main>
         </div>
       </ThemeProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
