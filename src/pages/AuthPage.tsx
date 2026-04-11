@@ -16,7 +16,17 @@ export default function AuthPage() {
     const result = mode === 'signin'
       ? await signIn(email, password)
       : await signUp(email, password);
-    if (result.error) setError(result.error);
+    if (result.error) {
+      const msg = result.error.toLowerCase();
+      if (msg.includes('already registered') || msg.includes('already exists') || msg.includes('user_already_exists')) {
+        setMode('signin');
+        setError('An account with this email already exists. Please sign in.');
+      } else if (msg.includes('invalid login') || msg.includes('invalid credentials') || msg.includes('email not confirmed')) {
+        setError('Incorrect email or password. Please try again.');
+      } else {
+        setError(result.error);
+      }
+    }
     setLoading(false);
   };
 
