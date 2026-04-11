@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function AuthPage() {
-  const { signIn, signUp } = useAuth();
+  const { user, signIn, signUp } = useAuth();
+
+  if (user) return <Navigate to="/search" replace />;
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
