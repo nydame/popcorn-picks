@@ -4,7 +4,7 @@ export interface Database {
       favorites: {
         Row: {
           id: string;
-          session_id: string;
+          user_id: string;
           movie_id: string;
           title: string;
           poster: string;
@@ -14,7 +14,7 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          session_id: string;
+          user_id: string;
           movie_id: string;
           title: string;
           poster?: string;
@@ -24,7 +24,7 @@ export interface Database {
         };
         Update: {
           id?: string;
-          session_id?: string;
+          user_id?: string;
           movie_id?: string;
           title?: string;
           poster?: string;

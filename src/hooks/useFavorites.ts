@@ -1,34 +1,31 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import type { FavoriteItem } from '../types/database';
 
-function getSessionId(): string {
-  let id = sessionStorage.getItem('pp-session-id');
-  if (!id) {
-    id = crypto.randomUUID();
-    sessionStorage.setItem('pp-session-id', id);
-  }
-  return id;
-}
-
 export function useFavorites() {
+  const { user } = useAuth();
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const sessionId = getSessionId();
-
   const fetchFavorites = useCallback(async () => {
+    if (!user) {
+      setFavorites([]);
+      setLoading(false);
+      return;
+    }
+
     const { data, error } = await supabase
       .from('favorites')
       .select('*')
-      .eq('session_id', sessionId)
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
     if (!error && data) {
       setFavorites(data);
     }
     setLoading(false);
-  }, [sessionId]);
+  }, [user]);
 
   useEffect(() => {
     fetchFavorites();
@@ -41,13 +38,15 @@ export function useFavorites() {
     year?: string;
     overview?: string;
   }): Promise<{ error?: string }> => {
+    if (!user) return { error: 'Not authenticated' };
+
     const alreadyIn = favorites.some(f => f.movie_id === movie.movie_id);
     if (alreadyIn) return { error: 'Already in favorites' };
 
     const { data, error } = await supabase
       .from('favorites')
       .insert({
-        session_id: sessionId,
+        user_id: user.id,
         movie_id: movie.movie_id,
         title: movie.title,
         poster: movie.poster ?? '',
